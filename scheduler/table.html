@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>간호사 근무표</title>
+    <style>
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 20px;
+        font-weight: 400;
+      }
+
+      .group-table {
+        border: 1px solid black;
+        border-radius: 3px;
+        border-collapse: collapse;
+      }
+
+      .group-table tr {
+        border-bottom: 1px solid black;
+      }
+
+      .group-table td {
+        padding: 5px 10px;
+      }
+
+      .group-table th {
+        padding: 5px 10px;
+        border-right: 1px solid;
+      }
+
+      .group {
+        text-align: center;
+      }
+
+      .timetable {
+        border: 1px solid black;
+        border-radius: 3px;
+        border-collapse: collapse;
+      }
+
+      .timetable tr {
+        border-bottom: 1px solid;
+      }
+
+      .timetable td {
+        padding: 15px 45px;
+      }
+
+      .group-A {
+        background-color: cornflowerblue;
+      }
+
+      .group-B {
+        background-color: wheat;
+      }
+
+      .group-C {
+        background-color: lightcoral;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>근무시간표</h1>
+    <h2>2019-03-01 ~ 2019-05-06</h2>
+    $duration
+    <table class="group-table">
+      <tr>
+        <th rowspan="2" class="group-A">A조</th>
+        <td>A</td>
+      </tr>
+      <tr>
+        <td>B</td>
+      </tr>
+      <tr>
+        <th rowspan="2" class="group-B">B조</th>
+        <td>A</td>
+      </tr>
+      <tr>
+        <td>B</td>
+      </tr>
+      <tr>
+        <th rowspan="2" class="group-C">C조</th>
+        <td>A</td>
+      </tr>
+      <tr>
+        <td>B</td>
+      </tr>
+    </table>
+
+    $grouptable
+    <table class="timetable">
+      <tr>
+        <td></td>
+        <td>13(M)</td>
+        <td>14(T)</td>
+        <td>수</td>
+        <td>목</td>
+        <td>금</td>
+        <td>토</td>
+        <td>일</td>
+      </tr>
+      <tr>
+        <td>새벽</td>
+        <td colspan="5" class="group group-A">A</td>
+        <td>일반1 조무2</td>
+        <td>일반2 조무3</td>
+      </tr>
+      <tr>
+        <td>주간</td>
+        <td colspan="5" class="group group-B">B</td>
+        <td colspan="2">수1 일반2 조무3</td>
+      </tr>
+      <tr>
+        <td>야간</td>
+        <td colspan="5" class="group group-C">C</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>휴무</td>
+        <td>
+          수1 <br />
+          일반3
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+
+    $timetable
+  </body>
+</html>

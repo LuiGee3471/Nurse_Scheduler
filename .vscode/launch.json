@@ -1,0 +1,12 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - Scheduler",
+      "request": "launch",
+      "mainClass": "scheduler.Scheduler",
+      "projectName": "Nurse_Scheduler_c8990ad1",
+      "console": "integratedTerminal"
+    }
+  ]
+}
