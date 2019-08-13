@@ -37,6 +37,12 @@ public class Scheduler {
       System.out.println("숫자로 올바르게 입력해주세요");
       System.exit(0);
     }
+
+    if (generalNurse < 3 || aideNurse < 3) {
+      System.out.println("간호사의 수가 너무 적습니다.");
+      System.out.println("최소 3명 이상을 입력해주세요.");
+      System.exit(0);
+    }
     nurses = cal.makeNurses(headNurse, generalNurse, aideNurse);
 
     try {
