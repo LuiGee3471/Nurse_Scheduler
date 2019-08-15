@@ -16,7 +16,7 @@ import scheduler.DateUtils;
 public class Workday {
   private LocalDate workdate; // 날짜
   private String weekday; // 요일
-  private Map<String, String> todayShift; // 오늘의 근무시간대
+  private Map<String, GroupName> todayShift; // 오늘의 근무시간대
   private List<String> offDayNurses; // 오늘 휴무 간호사 이름 목록
 
   private Nurse headOnWeekend; // 주말 당일 수간호사
@@ -80,11 +80,11 @@ public class Workday {
     this.aidesOnWeekend = aidesOnWeekend;
   }
 
-  public Map<String, String> getTodayShift() {
+  public Map<String, GroupName> getTodayShift() {
     return this.todayShift;
   }
 
-  public void setTodayShift(Map<String, String> todayShift) {
+  public void setTodayShift(Map<String, GroupName> todayShift) {
     this.todayShift = todayShift;
   }
 

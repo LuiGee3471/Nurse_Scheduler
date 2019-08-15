@@ -4,25 +4,16 @@ import java.time.LocalDate;
 import java.util.Random;
 
 public class Nurse {
-  public static final int MIDNIGHT = 0;
-  public static final int DAY = 1;
-  public static final int NIGHT = 2;
-
-  public static final int HEAD_NURSE = 0;
-  public static final int GENERAL_NURSE = 1;
-  public static final int AIDE_NURSE = 2;
-
-  public static final String[] groupNames = { "A조", "B조", "C조" };
   private static Random random = new Random();
 
   private String name; // 이름
   private int offDays; // 휴무일
-  private int lastShift = 1; // 지난 주 근무시간
-  private int currentShift = 1; // 이번 주 근무시간
-  private int rank; // 등급
+  private Shift lastShift = Shift.DAY; // 지난 주 근무시간
+  private Shift currentShift = Shift.DAY; // 이번 주 근무시간
+  private Rank rank; // 등급
   private LocalDate birthday; // 생일
   private boolean workToday; // 휴무날 일했는지
-  private String groupName; // 근무조 이름
+  private GroupName groupName; // 근무조 이름
 
   public Nurse() {
     // 생일 기능을 위해 생일 임의로 생성
@@ -42,11 +33,11 @@ public class Nurse {
     this.workToday = workToday;
   }
 
-  public String getGroupName() {
+  public GroupName getGroupName() {
     return this.groupName;
   }
 
-  public void setGroupName(String groupName) {
+  public void setGroupName(GroupName groupName) {
     this.groupName = groupName;
   }
 
@@ -54,16 +45,16 @@ public class Nurse {
     return birthday;
   }
 
-  public void setBirthday(LocalDate birthday) {
-    this.birthday = birthday;
-  }
-
-  public int getRank() {
+  public Rank getRank() {
     return this.rank;
   }
 
-  public void setRank(int rank) {
+  public void setRank(Rank rank) {
     this.rank = rank;
+  }
+
+  public void setBirthday(LocalDate birthday) {
+    this.birthday = birthday;
   }
 
   public String getName() {
@@ -82,19 +73,19 @@ public class Nurse {
     this.offDays = offDays;
   }
 
-  public int getLastShift() {
+  public Shift getLastShift() {
     return this.lastShift;
   }
 
-  public void setLastShift(int lastShift) {
+  public void setLastShift(Shift lastShift) {
     this.lastShift = lastShift;
   }
 
-  public int getCurrentShift() {
+  public Shift getCurrentShift() {
     return this.currentShift;
   }
 
-  public void setCurrentShift(int currentShift) {
+  public void setCurrentShift(Shift currentShift) {
     this.currentShift = currentShift;
   }
 }

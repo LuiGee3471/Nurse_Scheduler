@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import scheduler.model.Nurse;
+import scheduler.model.Rank;
 import scheduler.model.Workday;
 
 public class Scheduler {
@@ -43,7 +44,6 @@ public class Scheduler {
       System.out.println("최소 3명 이상을 입력해주세요.");
       System.exit(0);
     }
-    nurses = cal.makeNurses(headNurse, generalNurse, aideNurse);
 
     try {
       System.out.println("시작 날짜 입력(ex. 2019-03-01)");
@@ -59,6 +59,8 @@ public class Scheduler {
       System.out.println("기간 설정이 잘못되었습니다.");
       System.exit(0);
     }
+
+    nurses = cal.makeNurses(headNurse, generalNurse, aideNurse);
 
     for (int i = 0; i <= ChronoUnit.DAYS.between(startDate, endDate); i++) {
       LocalDate dateToSchedule = startDate.plusDays(i);
@@ -97,15 +99,16 @@ public class Scheduler {
     StringBuffer groupA = new StringBuffer("A조: ");
     StringBuffer groupB = new StringBuffer("B조: ");
     StringBuffer groupC = new StringBuffer("C조: ");
-    for (Nurse nurse : nurses.get(Nurse.GENERAL_NURSE)) {
+    System.out.println();
+    for (Nurse nurse : nurses.get(Rank.GENERAL.index())) {
       switch (nurse.getGroupName()) {
-      case "A조":
+      case A조:
         groupA.append(nurse.getName() + " ");
         break;
-      case "B조":
+      case B조:
         groupB.append(nurse.getName() + " ");
         break;
-      case "C조":
+      case C조:
         groupC.append(nurse.getName() + " ");
         break;
       }

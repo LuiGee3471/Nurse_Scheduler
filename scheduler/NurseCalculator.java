@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import scheduler.model.GroupName;
 import scheduler.model.Nurse;
+import scheduler.model.Rank;
+import scheduler.model.Shift;
 import scheduler.model.Workday;
 
 /**
@@ -20,19 +23,19 @@ public class NurseCalculator {
    * 월요일에 근무시간대 새로 배정
    */
   public void assignNewShift(List<List<Nurse>> nurses) {
-    List<Nurse> generals = nurses.get(Nurse.GENERAL_NURSE);
-    List<Nurse> aides = nurses.get(Nurse.AIDE_NURSE);
+    List<Nurse> generals = nurses.get(Rank.GENERAL.index());
+    List<Nurse> aides = nurses.get(Rank.AIDE.index());
 
     for (Nurse general : generals) {
-      int lastShift = general.getCurrentShift();
-      int newShift = lastShift == 0 ? 2 : lastShift - 1;
+      Shift lastShift = general.getCurrentShift();
+      Shift newShift = lastShift == Shift.NIGHT ? Shift.DAY : (lastShift == Shift.DAY ? Shift.MIDNIGHT : Shift.NIGHT);
       general.setLastShift(lastShift);
       general.setCurrentShift(newShift);
     }
 
     for (Nurse aide : aides) {
-      int lastShift = aide.getCurrentShift();
-      int newShift = lastShift == 0 ? 2 : lastShift - 1;
+      Shift lastShift = aide.getCurrentShift();
+      Shift newShift = lastShift == Shift.NIGHT ? Shift.DAY : (lastShift == Shift.DAY ? Shift.MIDNIGHT : Shift.NIGHT);
       aide.setLastShift(lastShift);
       aide.setCurrentShift(newShift);
     }
@@ -42,17 +45,17 @@ public class NurseCalculator {
    * 오늘 근무 시간대 출력을 위해
    */
   public void setTodayShift(List<Nurse> nurses, Workday workday) {
-    Map<String, String> todayShift = workday.getTodayShift();
+    Map<String, GroupName> todayShift = workday.getTodayShift();
     for (int i = 0; i < 3; i++) {
       Nurse nurse = nurses.get(i);
       switch (nurse.getCurrentShift()) {
-      case Nurse.MIDNIGHT:
+      case MIDNIGHT:
         todayShift.put("새벽", nurse.getGroupName());
         break;
-      case Nurse.DAY:
+      case DAY:
         todayShift.put("주간", nurse.getGroupName());
         break;
-      case Nurse.AIDE_NURSE:
+      case NIGHT:
         todayShift.put("야간", nurse.getGroupName());
         break;
       }
@@ -72,22 +75,22 @@ public class NurseCalculator {
     for (int i = 0; i < headNurse; i++) {
       Nurse head = new Nurse();
       head.setName("수" + (i + 1));
-      head.setRank(Nurse.HEAD_NURSE);
+      head.setRank(Rank.HEAD);
       headNurses.add(head);
     }
 
     for (int i = 0; i < generalNurse; i++) {
       Nurse general = new Nurse();
       general.setName("일반" + (i + 1));
-      general.setRank(Nurse.GENERAL_NURSE);
+      general.setRank(Rank.GENERAL);
       if (i % 3 == 0) {
-        general.setCurrentShift(Nurse.MIDNIGHT);
-        general.setGroupName(Nurse.groupNames[0]);
+        general.setCurrentShift(Shift.MIDNIGHT);
+        general.setGroupName(GroupName.A조);
       } else if (i % 3 == 1) {
-        general.setGroupName(Nurse.groupNames[1]);
+        general.setGroupName(GroupName.B조);
       } else {
-        general.setCurrentShift(Nurse.NIGHT);
-        general.setGroupName(Nurse.groupNames[2]);
+        general.setCurrentShift(Shift.NIGHT);
+        general.setGroupName(GroupName.C조);
       }
       generalNurses.add(general);
     }
@@ -95,15 +98,15 @@ public class NurseCalculator {
     for (int i = 0; i < aideNurse; i++) {
       Nurse aide = new Nurse();
       aide.setName("조무" + (i + 1));
-      aide.setRank(Nurse.AIDE_NURSE);
+      aide.setRank(Rank.AIDE);
       if (i % 3 == 0) {
-        aide.setCurrentShift(Nurse.MIDNIGHT);
-        aide.setGroupName(Nurse.groupNames[0]);
+        aide.setCurrentShift(Shift.MIDNIGHT);
+        aide.setGroupName(GroupName.A조);
       } else if (i % 3 == 1) {
-        aide.setGroupName(Nurse.groupNames[1]);
+        aide.setGroupName(GroupName.B조);
       } else {
-        aide.setCurrentShift(Nurse.NIGHT);
-        aide.setGroupName(Nurse.groupNames[2]);
+        aide.setCurrentShift(Shift.NIGHT);
+        aide.setGroupName(GroupName.C조);
       }
       aideNurses.add(aide);
     }
@@ -119,7 +122,7 @@ public class NurseCalculator {
    * 평일 근무 배정
    */
   public void assignNurses(List<List<Nurse>> nurses, Workday workday) {
-    setTodayShift(nurses.get(Nurse.GENERAL_NURSE), workday);
+    setTodayShift(nurses.get(Rank.GENERAL.ordinal()), workday);
     for (List<Nurse> list : nurses) {
       assignNursesOnWeekday(list, workday);
     }
@@ -141,29 +144,29 @@ public class NurseCalculator {
    * 주말 근무 배정
    */
   public void assignWeekends(Workday workday, List<List<Nurse>> nurses) {
-    List<List<Nurse>> filteredNurses = filterWithOffDays(nurses);
-    List<Nurse> heads = filteredNurses.get(Nurse.HEAD_NURSE);
-    List<Nurse> generals = filteredNurses.get(Nurse.GENERAL_NURSE);
-    List<Nurse> aides = filteredNurses.get(Nurse.AIDE_NURSE);
+    List<List<Nurse>> filteredNurses = filterWithOffDays(workday, nurses);
+    List<Nurse> heads = filteredNurses.get(Rank.HEAD.ordinal());
+    List<Nurse> generals = filteredNurses.get(Rank.GENERAL.ordinal());
+    List<Nurse> aides = filteredNurses.get(Rank.AIDE.ordinal());
 
     workday.setHeadOnWeekend(heads.get(random.nextInt(heads.size())));
     workday.setGeneralsOnWeekend(assignNurseOnWeekend(workday, generals));
     workday.setAidesOnWeekend(assignNurseOnWeekend(workday, aides));
 
-    for (Nurse head : nurses.get(Nurse.HEAD_NURSE)) {
+    for (Nurse head : nurses.get(Rank.HEAD.ordinal())) {
       if (head != workday.getHeadOnWeekend()) {
         head.setOffDays(head.getOffDays() + 1);
       }
     }
 
-    for (Nurse general : nurses.get(Nurse.GENERAL_NURSE)) {
+    for (Nurse general : nurses.get(Rank.GENERAL.ordinal())) {
       if (!workday.getGeneralsOnWeekend().contains(general)) {
         general.setOffDays(general.getOffDays() + 1);
         general.setWorkToday(false);
       }
     }
 
-    for (Nurse aide : nurses.get(Nurse.AIDE_NURSE)) {
+    for (Nurse aide : nurses.get(Rank.AIDE.ordinal())) {
       if (!workday.getAidesOnWeekend().contains(aide)) {
         aide.setOffDays(aide.getOffDays() + 1);
         aide.setWorkToday(false);
@@ -179,7 +182,7 @@ public class NurseCalculator {
 
     while (nursesToWork.size() < 3) {
       Nurse nurse = nurses.get(random.nextInt(nurses.size()));
-      if (nurse.getCurrentShift() == nursesToWork.size()) {
+      if (nurse.getCurrentShift().index() == nursesToWork.size()) {
         nurse.setWorkToday(true);
         nursesToWork.add(nurse);
       }
@@ -206,7 +209,7 @@ public class NurseCalculator {
   /**
    * 평균 휴무일보다 많이 또는 똑같이 쉰 간호사만 불러오기
    */
-  public List<List<Nurse>> filterWithOffDays(List<List<Nurse>> nurses) {
+  public List<List<Nurse>> filterWithOffDays(Workday workday, List<List<Nurse>> nurses) {
     List<List<Nurse>> filteredNurses = new ArrayList<>();
     List<Nurse> lessWorkedHeads = new ArrayList<>();
     List<Nurse> lessWorkedGenerals = new ArrayList<>();
@@ -214,15 +217,16 @@ public class NurseCalculator {
 
     for (List<Nurse> nursesList : nurses) {
       for (Nurse nurse : nursesList) {
-        if (nurse.getOffDays() >= averageOffDays(nursesList) && !nurse.getWorkToday()) {
+        if (nurse.getOffDays() >= averageOffDays(nursesList) && !nurse.getWorkToday()
+            && isBirthday(nurse.getBirthday(), workday.getWorkdate())) {
           switch (nurse.getRank()) {
-          case Nurse.HEAD_NURSE:
+          case HEAD:
             lessWorkedHeads.add(nurse);
             break;
-          case Nurse.GENERAL_NURSE:
+          case GENERAL:
             lessWorkedGenerals.add(nurse);
             break;
-          case Nurse.AIDE_NURSE:
+          case AIDE:
             lessWorkedAides.add(nurse);
             break;
           default:
@@ -233,9 +237,9 @@ public class NurseCalculator {
     }
 
     // 조건에 맞는 간호사가 충분하지 않다면 전체 대상으로 변경
-    filteredNurses.add(isOkToUseList(lessWorkedHeads) ? lessWorkedHeads : nurses.get(Nurse.HEAD_NURSE));
-    filteredNurses.add(isOkToUseList(lessWorkedGenerals) ? lessWorkedGenerals : nurses.get(Nurse.GENERAL_NURSE));
-    filteredNurses.add(isOkToUseList(lessWorkedAides) ? lessWorkedAides : nurses.get(Nurse.AIDE_NURSE));
+    filteredNurses.add(isOkToUseList(lessWorkedHeads) ? lessWorkedHeads : nurses.get(Rank.HEAD.ordinal()));
+    filteredNurses.add(isOkToUseList(lessWorkedGenerals) ? lessWorkedGenerals : nurses.get(Rank.GENERAL.ordinal()));
+    filteredNurses.add(isOkToUseList(lessWorkedAides) ? lessWorkedAides : nurses.get(Rank.AIDE.ordinal()));
 
     return filteredNurses;
   }
@@ -250,13 +254,13 @@ public class NurseCalculator {
 
     for (Nurse nurse : nurses) {
       switch (nurse.getCurrentShift()) {
-      case Nurse.MIDNIGHT:
+      case MIDNIGHT:
         midnight = true;
         break;
-      case Nurse.DAY:
+      case DAY:
         day = true;
         break;
-      case Nurse.NIGHT:
+      case NIGHT:
         night = true;
         break;
       }
